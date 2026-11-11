@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: materials-dag-materializer
+  labels:
+    app: materials-data-foundry
+    component: flyte-worker
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: materials-data-foundry
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: materializer
+          image: ghcr.io/itsoumya-d/materials-data-foundry:latest
+          command: ["python", "-m", "pytest", "-v"]
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
